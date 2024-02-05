@@ -340,7 +340,7 @@ function WatchedSelected({ selectedId, onClose, onAddRating, watched }) {
       setIsLoading(true);
       try {
         const res =
-          await fetch(`http://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}
+          await fetch(`https://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}
           `);
         const data = await res.json();
         setMovie(data);
