@@ -8,6 +8,7 @@
   --textColorDarker: #abb5bf;
   --bgColor: #343a40;
   --bgColor-20per: #2a2e33;
+  --bgColorScrollThumb: #5a5e61;
   --bgColor-50per: #1a1d20;
 }
 
@@ -16,19 +17,43 @@
   padding: 0;
 }
 
+button {
+  all: unset;
+}
+
+.App {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+  padding-top: 1rem;
+}
+
+.background {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  filter: blur(5.5rem);
+  opacity: 0.7;
+}
+
 body {
   background-color: var(--bgColor-50per);
   color: var(--primarytextColor);
   font-family: "Ubuntu", sans-serif;
-  padding: 2.5rem;
 }
 
 .navbar {
+  position: fixed;
+  left: 0;
+  right: 0;
   display: flex;
-  background-color: var(--primaryColor);
+  background-color: #731d1d;
   border-radius: 10px;
   height: 5rem;
   transition: all 0.3s;
+  z-index: 2;
 }
 
 .navbar:hover {
@@ -63,7 +88,7 @@ body {
   flex-basis: 80%;
   height: 2.5rem;
   border-radius: 5px;
-  background-color: var(--primaryColorLighten);
+  background-color: rgba(255, 255, 255, 0.479);
   border: none;
   color: var(--primarytextColor);
   font-size: 1.2em;
@@ -90,23 +115,56 @@ body {
 }
 
 .container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 100px;
   display: flex;
   height: 80vh;
   margin-top: 2rem;
   gap: 1.5rem;
   justify-content: center;
+  z-index: 3;
 }
 
 .box {
   background-color: var(--bgColor-20per);
-  width: 45%;
-  height: 100%;
+  width: 30%;
+  height: 83vh;
   border-radius: 10px;
   transition: all 0.5s;
+  overflow: auto;
+  z-index: 3;
 }
 
 .box:nth-of-type(2) {
   width: 35%;
+}
+
+.movielist {
+  display: flex;
+  flex-direction: column;
+}
+
+.movieListDiv {
+  display: flex;
+  padding: 20px;
+  transition: all 0.3s;
+  border-radius: 5px;
+  border-bottom: 2px solid var(--bgColor);
+}
+
+.movieListDiv:hover {
+  background-color: var(--bgColor);
+  cursor: pointer;
+}
+.movieListDiv:active {
+  background-color: var(--bgColor-20per);
+}
+
+.movieListDiv > img {
+  width: 5vw;
+  border-radius: 5px;
 }
 
 .box:hover {
@@ -129,7 +187,7 @@ body {
 }
 
 .watched:hover {
-  transform: translateY(-5px);
+  transform: translateY(-2px);
 }
 
 .summary {
@@ -139,6 +197,10 @@ body {
   margin-top: 1rem;
   font-size: 1.3rem;
   text-align: center;
+}
+
+.summary > span {
+  cursor: pointer;
 }
 
 .summary span p:nth-of-type(2) {
@@ -184,7 +246,220 @@ body {
   margin-top: 4px;
   display: inline-block;
   vertical-align: bottom;
-  padding: 0.25em 0.35em;
+  padding: 0.2em 0.3em;
   border-radius: 0.15em;
-  background: radial-gradient(#ffffb8, #ce981d);
+  background: radial-gradient(rgb(255, 255, 184), #ce981d);
+}
+
+@keyframes loading {
+  0% {
+    transform: translateY(10px);
+  }
+  100% {
+    transform: translateY(-10px);
+  }
+}
+
+.loading {
+  animation: 0.5s infinite alternate loading;
+}
+
+.loadingDiv {
+  display: flex;
+  height: 50%;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+}
+
+::-webkit-scrollbar {
+  background-color: var(--bgColor);
+  border-radius: 6px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bgColorScrollThumb);
+  border-radius: 5px;
+  width: 1px;
+}
+
+.movieBasicInfo {
+  padding-left: 20px;
+}
+
+.movieBasicInfo p {
+  padding-bottom: 20px;
+}
+
+.selectedMovieHeader {
+  display: flex;
+  height: 40vh;
+  overflow: auto;
+}
+
+.selectedMovieInfo {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.selectedMovieInfo > * {
+  margin-top: 10px;
+}
+
+.plotAndRuntimeDiv p:nth-of-type(1) {
+  margin-bottom: 10px;
+}
+
+.rateSection {
+  display: flex;
+  height: 10vh;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+
+.rateSection:hover {
+  background-color: var(--bgColor);
+}
+
+.aditionalInfo {
+  margin: 10px;
+}
+
+.streamLogo {
+  display: flex;
+  list-style: none;
+  justify-content: space-around;
+  margin: 50px;
+}
+
+.streamLogo li img {
+  width: 80px;
+  border-radius: 50%;
+  transition: all 0.5s;
+}
+
+.streamLogo li img:hover {
+  transform: translateY(-4px);
+  cursor: pointer;
+  box-shadow: ();
+}
+
+.streamLogo li:nth-of-type(5) img {
+  height: 80px;
+}
+
+.trailerBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primarytextColor);
+  background-color: #731d1d;
+  width: 100px;
+  height: 40px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.5),
+    inset 0px -3px 6px -2px rgba(0, 0, 0, 0.3);
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+.trailerBtn:hover {
+  cursor: pointer;
+}
+
+.trailerBtn:active {
+  box-shadow: inset 0px 12px 25px 5px rgba(0, 0, 0, 0.4);
+}
+
+.trailerBtnDiv {
+  display: flex;
+  justify-content: center;
+}
+
+.back {
+  position: absolute;
+  font-size: 25px;
+  background-color: var(--primarytextColor);
+  border-radius: 50%;
+  color: #1a1d20;
+  padding: 5px 8px;
+}
+
+.back:active {
+  box-shadow: inset 0px 12px 25px 5px rgba(0, 0, 0, 0.4);
+}
+
+.back:hover {
+  cursor: pointer;
+}
+
+.rateSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.addBtn {
+  margin-top: 10px;
+  color: var(--primarytextColor);
+  background-color: #731d1d;
+  width: 50px;
+  height: 40px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.5),
+    inset 0px -3px 6px -2px rgba(0, 0, 0, 0.3);
+  padding-left: 50px;
+  padding-right: 50px;
+  text-align: center;
+}
+
+.addBtn:hover {
+  cursor: pointer;
+}
+
+.addBtn:active {
+  box-shadow: inset 0px 12px 25px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* .pop {
+  transition: all 01s;
+}
+.pop:active {
+  transform: translateY(500px);
+} */
+
+.watchedMovie {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+  align-items: center;
+  font-size: 1.1rem;
+  transition: all 0.5s;
+  border-radius: 5px;
+}
+
+.watchedMovie:hover {
+  transform: scale(1.02);
+}
+
+.watchedPoster {
+  width: 3vw;
+  margin: 5px;
+}
+
+.deleteBtn img {
+  width: 2em;
+}
+
+.deleteBtn {
+  transition: all 0.3s;
+}
+
+.deleteBtn:hover {
+  cursor: pointer;
+  transform: translateY(-3px);
 }
