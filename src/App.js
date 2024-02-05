@@ -1,8 +1,46 @@
 import { useEffect, useState } from "react";
 import StarRating from "./starRating";
+import TrailerModal from "./TrailerModal";
 
 const KEY = "86195a89";
 const TRAILERKEY = "9de0616d717374f9f382940f3ebb922d";
+const topFive = [
+  {
+    imdbID: "tt0111161",
+    title: "The Shawshank Redemption",
+    imdbRating: "9.3",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg",
+  },
+  {
+    imdbID: "tt23849204",
+    title: "12th Fail",
+    imdbRating: "9.2",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BOTJlY2U2ZmYtMzU3Ny00ZDI3LWEwMDYtOWIxNzdhZDI5ZWRkXkEyXkFqcGdeQXVyMTY3ODkyNDkz._V1_SX300.jpg",
+  },
+  {
+    imdbID: "tt0068646",
+    title: "The Godfather",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
+    imdbRating: "9.2",
+  },
+  {
+    imdbID: "tt0468569",
+    title: "The Dark Knight",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SX300.jpg",
+    imdbRating: "9.0",
+  },
+  {
+    imdbID: "tt0108052",
+    title: "Schindler's List",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BNDE4OTMxMTctNmRhYy00NWE2LTg3YzItYTk3M2UwOTU5Njg4XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
+    imdbRating: "9.0",
+  },
+];
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
@@ -15,8 +53,10 @@ export default function App() {
   const [background, setBackground] = useState("");
   const [selectedId, setSelectedId] = useState(null);
   const [watched, setWatched] = useState([]);
+  const [movieTrailer, setMovieTrailer] = useState("");
+  const [trailerOpen, setTrailerOpen] = useState(false);
 
-  console.log(watched);
+  console.log(inptSearch);
 
   function handleSearch(e) {
     setInptSearch(e);
@@ -25,6 +65,8 @@ export default function App() {
   function handleClose() {
     setSelectedId(null);
     setBackground("");
+    setMovieTrailer("");
+    setTrailerOpen(false);
   }
 
   function handleWatched(movie) {
@@ -36,6 +78,7 @@ export default function App() {
   }
 
   function handleSelectIdBackground(id, poster) {
+    setTrailerOpen(false);
     setSelectedId((selectedId) => (selectedId === id ? null : id));
     setBackground((background) =>
       background === poster.replace("SX300", "M")
@@ -85,10 +128,12 @@ export default function App() {
     <div className="App">
       <div
         style={{
-          backgroundImage: background ? `url(${background})` : "",
+          backgroundImage: background
+            ? `url(${background})`
+            : "url(./images/mainBcgrnd.webp)",
           backgroundRepeat: background ? "round" : "initial",
           backgroundOrigin: background ? "border-box" : "",
-          backgroundSize: background ? "cover" : "",
+          backgroundSize: background ? "cover" : "cover",
         }}
         className="background"
       ></div>
@@ -107,6 +152,7 @@ export default function App() {
       </NavBar>
 
       <Container>
+        {trailerOpen ? <TrailerModal movieTrailer={movieTrailer} /> : ""}
         <Box>
           {isLoading && <Loader />}
           {!isLoading && (
@@ -123,6 +169,8 @@ export default function App() {
               onClose={handleClose}
               selectedId={selectedId}
               watched={watched}
+              setMovieTrailer={setMovieTrailer}
+              setTrailerOpen={setTrailerOpen}
             />
           ) : (
             <>
@@ -243,6 +291,25 @@ function WatchedMoviesSummary({ watched }) {
   );
 }
 
+/* function TopMovies() {
+  console.log(topFive);
+
+  return (
+    <div className="movielist">
+      <h1>IMDb Top 5 Movies</h1>
+      {topFive.map((movie) => (
+        <div className="movieListDiv">
+          <img src={movie.Poster} alt="" />
+          <div className="movieBasicInfo">
+            <h2>{movie.title}</h2>
+            <p>⭐{movie.imdbRating}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+} */
+
 function WatchedList({ watched, onDelete }) {
   return (
     <div className="watchedList">
@@ -281,14 +348,18 @@ function WatchedMovie({ movie, onDelete }) {
   );
 }
 
-function WatchedSelected({ selectedId, onClose, onAddRating, watched }) {
+function WatchedSelected({
+  selectedId,
+  onClose,
+  onAddRating,
+  watched,
+  setMovieTrailer,
+  setTrailerOpen,
+}) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [movieTrailer, setMovieTrailer] = useState("");
   const [userRating, setUserRating] = useState("");
-
-  const youtubeSrc = `https://www.youtube.com/embed/${movieTrailer}`;
 
   const {
     Actors: actors,
@@ -370,6 +441,7 @@ function WatchedSelected({ selectedId, onClose, onAddRating, watched }) {
         setMovieTrailer(data.trailer.youtube_video_id);
       } catch (err) {
         setError(err.message);
+        setMovieTrailer("");
       } finally {
         setIsLoading(false);
       }
@@ -437,17 +509,13 @@ function WatchedSelected({ selectedId, onClose, onAddRating, watched }) {
           <section className="aditionalInfo">
             <StreamLogos title={title} />
             <div className="trailerBtnDiv">
-              <button className="trailerBtn">Watch Trailer</button>
+              <button
+                onClick={() => setTrailerOpen(true)}
+                className="trailerBtn"
+              >
+                Watch Trailer
+              </button>
             </div>
-            {/* <iframe
-              width="100%"
-              height="215"
-              src="https://www.youtube.com/embed/ApXoWvfEYVU?si=bx0vhiR3Z5-6CFVB"
-              title="YouTube video player"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen="1"
-            ></iframe> */}
           </section>
         </div>
       )}
