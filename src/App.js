@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import StarRating from "./starRating";
 import TrailerModal from "./TrailerModal";
+import { useMoviesFetch } from "./useMoviesFetch";
+import { useLocalStorage } from "./useLocalStorage";
 
-const KEY = "86195a89";
 const TRAILERKEY = "9de0616d717374f9f382940f3ebb922d";
+const KEY = "86195a89";
+
 const topFive = [
   {
     imdbID: "tt0111161",
@@ -46,17 +49,15 @@ const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 export default function App() {
-  const [movies, setMovies] = useState([]);
   const [inptSearch, setInptSearch] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const [background, setBackground] = useState("");
   const [selectedId, setSelectedId] = useState(null);
-  const [watched, setWatched] = useState([]);
   const [movieTrailer, setMovieTrailer] = useState("");
   const [trailerOpen, setTrailerOpen] = useState(false);
-
-  console.log(inptSearch);
+  const { movies, isLoading, error } = useMoviesFetch(inptSearch, KEY);
+  const [watched, setWatched] = useLocalStorage([], "movies");
+  console.log(watched);
+  console.log(selectedId);
 
   function handleSearch(e) {
     setInptSearch(e);
@@ -86,43 +87,6 @@ export default function App() {
         : poster.replace("SX300", "M")
     );
   }
-
-  useEffect(() => {
-    const controller = new AbortController();
-    async function handleMoviesFetch() {
-      try {
-        setError("");
-        setIsLoading(true);
-        const res = await fetch(
-          `https://omdbapi.com/?apikey=${KEY}&s=${inptSearch}`,
-          {
-            signal: controller.signal,
-          }
-        );
-        if (!res.ok) throw new Error("something went wrong!");
-        const data = await res.json();
-        if (data.Response === "False") throw new Error("Movie not found!");
-        setMovies(data.Search);
-        setError("");
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          setError(err.message);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    if (inptSearch.length < 2) {
-      setMovies([]);
-      setError("");
-      return;
-    }
-    handleClose();
-    handleMoviesFetch();
-    return function () {
-      controller.abort();
-    };
-  }, [inptSearch]);
 
   return (
     <div className="App">
@@ -189,6 +153,23 @@ function NavBar({ children }) {
 }
 
 function SearchBar({ onSearch, inptSearch }) {
+  const inputElement = useRef(null);
+
+  useEffect(() => {
+    inputElement.current.focus();
+
+    function callback(e) {
+      if (document.activeElement === inputElement.current) return;
+
+      if (e.code === "Enter") {
+        inputElement.current.focus();
+        onSearch("");
+      }
+    }
+    document.addEventListener("keydown", callback);
+    return document.removeEventListener("keyup", callback);
+  }, []);
+
   return (
     <input
       onChange={(e) => onSearch(e.target.value)}
@@ -196,6 +177,7 @@ function SearchBar({ onSearch, inptSearch }) {
       type="text"
       placeholder="Search Movies..."
       value={inptSearch}
+      ref={inputElement}
     />
   );
 }
@@ -259,20 +241,24 @@ function Loader() {
 }
 
 function WatchedMoviesSummary({ watched }) {
+  console.log(watched);
   const avgImdbRating = average(
     watched.map((movie) => movie.imdbRating)
   ).toFixed(2);
   const avgUserRating = average(
     watched.map((movie) => movie.userRating)
   ).toFixed(2);
+
   const avgRuntime = average(watched.map((movie) => movie.runtime));
+
+  const watchedMovies = watched.length;
   return (
     <div className="watched">
       <h1 className="summaryheader">MOVIES YOU WATCHED</h1>
       <p className="summary">
         <span>
           <p className="pop">🍿</p>
-          <p>{watched.length} MOVIES</p>
+          <p>{watchedMovies} MOVIES</p>
         </span>
         <span className="watchedLogo">
           <p className="imdb-logo">IMDb</p>
@@ -313,7 +299,7 @@ function WatchedMoviesSummary({ watched }) {
 function WatchedList({ watched, onDelete }) {
   return (
     <div className="watchedList">
-      {watched.map((movie) => (
+      {watched?.map((movie) => (
         <WatchedMovie onDelete={onDelete} movie={movie} key={movie.imdbID} />
       ))}
     </div>
@@ -363,21 +349,16 @@ function WatchedSelected({
 
   const {
     Actors: actors,
-    Awards: awards,
-    Director: directors,
     Plot: plot,
-    Genre: genre,
     Rated: rated,
     Released: released,
     Runtime: runtime,
     Writer: writer,
     imdbRating,
-    totalSeasons,
     Type: type,
     imdbID,
     Poster: poster,
     Title: title,
-    Year: year,
   } = movie;
 
   const isWatched = watched?.map((movie) => movie.imdbID).includes(selectedId);
@@ -447,7 +428,15 @@ function WatchedSelected({
       }
     }
     fetchTrailer();
-  }, [imdbID]);
+  }, [imdbID, type, setMovieTrailer]);
+
+  useEffect(() => {
+    if (!title) return;
+    document.title = `Movie | ${title}`;
+    return function () {
+      document.title = "usePopcorn";
+    };
+  }, [title]);
 
   return (
     <>
