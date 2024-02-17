@@ -1,13 +1,18 @@
-export default function TrailerModal({ movieTrailer }) {
+export default function TrailerModal({ movieTrailer, active, onClose }) {
   const youtubeSrc = `https://www.youtube.com/embed/${movieTrailer}`;
 
   return (
-    <div className="trailerContainer">
+    <>
+      <div className="trailerContainer"> </div>
+
       <div className="trailerBox">
+        <button className="trailerCloseBtn" onClick={onClose}>
+          ❌
+        </button>
         {movieTrailer ? (
           <iframe
             width="100%"
-            height="215"
+            height="315"
             src={youtubeSrc}
             title="YouTube video player"
             frameborder="0"
@@ -15,9 +20,11 @@ export default function TrailerModal({ movieTrailer }) {
             allowfullscreen="1"
           ></iframe>
         ) : (
-          <p>No trailer Was Found...</p>
+          <div className="ErrDiv">
+            <p className="Err">No trailer Was Found...</p>
+          </div>
         )}
       </div>
-    </div>
+    </>
   );
 }

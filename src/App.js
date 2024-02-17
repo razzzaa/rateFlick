@@ -57,7 +57,7 @@ export default function App() {
   const { movies, isLoading, error } = useMoviesFetch(inptSearch, KEY);
   const [watched, setWatched] = useLocalStorage([], "movies");
   console.log(watched);
-  console.log(selectedId);
+  console.log(error);
 
   function handleSearch(e) {
     setInptSearch(e);
@@ -67,6 +67,10 @@ export default function App() {
     setSelectedId(null);
     setBackground("");
     setMovieTrailer("");
+    setTrailerOpen(false);
+  }
+
+  function handleCloseTrailer() {
     setTrailerOpen(false);
   }
 
@@ -90,60 +94,73 @@ export default function App() {
 
   return (
     <div className="App">
-      <div
-        style={{
-          backgroundImage: background
-            ? `url(${background})`
-            : "url(./images/mainBcgrnd.webp)",
-          backgroundRepeat: background ? "round" : "initial",
-          backgroundOrigin: background ? "border-box" : "",
-          backgroundSize: background ? "cover" : "cover",
-        }}
-        className="background"
-      ></div>
-      <NavBar>
-        <ul className="navbar">
-          <li>
-            <Logo />
-          </li>
-          <li>
-            <SearchBar inptSearch={inptSearch} onSearch={handleSearch} />
-          </li>
-          <li>
-            <MovieCount movies={movies} />
-          </li>
-        </ul>
-      </NavBar>
+      <div className={trailerOpen ? "trailerContainer" : ""}>
+        <div
+          style={{
+            backgroundImage: background
+              ? `url(${background})`
+              : "url(./images/mainBcgrnd.webp)",
+            backgroundRepeat: background ? "round" : "initial",
+            backgroundOrigin: background ? "border-box" : "",
+            backgroundSize: background ? "cover" : "cover",
+          }}
+          className="background"
+        ></div>
+        <NavBar>
+          <ul className="navbar">
+            <li>
+              <Logo />
+            </li>
+            <li>
+              <SearchBar inptSearch={inptSearch} onSearch={handleSearch} />
+            </li>
+            <li>
+              <MovieCount movies={movies} />
+            </li>
+          </ul>
+        </NavBar>
 
-      <Container>
-        {trailerOpen ? <TrailerModal movieTrailer={movieTrailer} /> : ""}
-        <Box>
-          {isLoading && <Loader />}
-          {!isLoading && (
-            <MovieList
-              onClickMovie={handleSelectIdBackground}
-              movies={movies}
-            />
-          )}
-        </Box>
-        <Box>
-          {selectedId ? (
-            <WatchedSelected
-              onAddRating={handleWatched}
-              onClose={handleClose}
-              selectedId={selectedId}
-              watched={watched}
-              setMovieTrailer={setMovieTrailer}
-              setTrailerOpen={setTrailerOpen}
-            />
-          ) : (
-            <>
-              <WatchedMoviesSummary watched={watched} selectedId={selectedId} />
-              <WatchedList onDelete={handleDelete} watched={watched} />
-            </>
-          )}
-        </Box>
-      </Container>
+        <Container>
+          <Box inptSearch={inptSearch}>
+            {isLoading && <Loader />}
+            {error && <Error onErr={error} />}
+            {!isLoading && !error && (
+              <MovieList
+                onClickMovie={handleSelectIdBackground}
+                movies={movies}
+              />
+            )}
+          </Box>
+          <Box>
+            {selectedId ? (
+              <WatchedSelected
+                onAddRating={handleWatched}
+                onClose={handleClose}
+                selectedId={selectedId}
+                watched={watched}
+                setMovieTrailer={setMovieTrailer}
+                setTrailerOpen={setTrailerOpen}
+              />
+            ) : (
+              <>
+                <WatchedMoviesSummary
+                  watched={watched}
+                  selectedId={selectedId}
+                />
+                <WatchedList onDelete={handleDelete} watched={watched} />
+              </>
+            )}
+          </Box>
+        </Container>
+      </div>
+      {trailerOpen ? (
+        <TrailerModal
+          onClose={handleCloseTrailer}
+          movieTrailer={movieTrailer}
+        />
+      ) : (
+        ""
+      )}
     </div>
   );
 }
@@ -198,8 +215,9 @@ function Container({ children }) {
   return <div className="container">{children}</div>;
 }
 
-function Box({ children }) {
-  return <div className="box">{children}</div>;
+function Box({ children, inptSearch }) {
+  console.log(inptSearch);
+  return <div className={`box ${!inptSearch ? "small" : ""}`}>{children}</div>;
 }
 
 function MovieList({ movies, onClickMovie }) {
@@ -334,6 +352,14 @@ function WatchedMovie({ movie, onDelete }) {
   );
 }
 
+function Error({ onErr }) {
+  return (
+    <div className="ErrDiv">
+      <p className="Err">{onErr}❌</p>
+    </div>
+  );
+}
+
 function WatchedSelected({
   selectedId,
   onClose,
@@ -445,7 +471,7 @@ function WatchedSelected({
       ) : (
         <div>
           <header className="selectedMovieHeader">
-            <button onClick={() => onClose()} className="back">
+            <button onClick={() => onClose()} className="defautBtn">
               ←
             </button>
             <img src={poster} alt="movieposter" />
@@ -483,7 +509,7 @@ function WatchedSelected({
                   onSetRating={setUserRating}
                   onRating={setUserRating}
                   maxRating={10}
-                  size={28}
+                  size={27}
                 />
                 {userRating > 0 && (
                   <button className="addBtn" onClick={handleAdd}>
