@@ -137,9 +137,9 @@ body {
   z-index: 3;
 }
 
-/* .box:nth-of-type(2) {
-  width: 35%;
-} */
+.box:nth-of-type(1) {
+  position: relative;
+}
 
 .movielist {
   display: flex;
@@ -518,4 +518,66 @@ body {
   justify-content: center;
   align-items: center;
   font-size: 1.5rem;
+}
+
+.topMoviesBubble {
+  background-color: #731d1d;
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  opacity: 1;
+}
+
+.topMoviesBubble:nth-of-type(1) {
+  left: 30%;
+  top: 75%;
+  width: 120px;
+  height: 120px;
+  opacity: 0;
+}
+.topMoviesBubble:nth-of-type(2) {
+  left: 10%;
+  top: 90%;
+  background-color: #731d1d;
+  width: 20px;
+  height: 20px;
+  opacity: 0;
+}
+.topMoviesBubble:nth-of-type(3) {
+  left: 80%;
+  top: 70%;
+  background-color: #731d1d;
+  width: 50px;
+  height: 50px;
+  opacity: 0;
+}
+.topMoviesBubble:nth-of-type(4) {
+  left: 61%;
+  top: 88%;
+  background-color: #731d1d;
+  width: 190px;
+  height: 190px;
+  opacity: 0;
+}
+
+.topMoviesBubble:nth-of-type(5) {
+  left: 11%;
+  top: 88%;
+  background-color: #731d1d;
+  width: 90px;
+  height: 90px;
+  opacity: 0;
+}
+
+.topMoviesBubble:nth-of-type(6) {
+  left: 88%;
+  top: 98%;
+  background-color: #731d1d;
+  width: 90px;
+  height: 90px;
+  opacity: 0;
+}
+
+.small:nth-last-of-type(2) {
+  overflow: hidden;
 }

@@ -9,8 +9,8 @@ export function useMoviesFetch(inptSearch, KEY) {
     const controller = new AbortController();
     async function handleMoviesFetch() {
       try {
-        setError("");
         setIsLoading(true);
+        setError("");
         const res = await fetch(
           `https://omdbapi.com/?apikey=${KEY}&s=${inptSearch}`,
           {

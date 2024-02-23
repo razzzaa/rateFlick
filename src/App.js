@@ -56,8 +56,7 @@ export default function App() {
   const [trailerOpen, setTrailerOpen] = useState(false);
   const { movies, isLoading, error } = useMoviesFetch(inptSearch, KEY);
   const [watched, setWatched] = useLocalStorage([], "movies");
-  console.log(watched);
-  console.log(error);
+  console.log(movies);
 
   function handleSearch(e) {
     setInptSearch(e);
@@ -122,6 +121,7 @@ export default function App() {
 
         <Container>
           <Box inptSearch={inptSearch}>
+            {movies.length <= 1 && <TopMovies inptSearch />}
             {isLoading && <Loader />}
             {error && <Error onErr={error} />}
             {!isLoading && !error && (
@@ -216,7 +216,6 @@ function Container({ children }) {
 }
 
 function Box({ children, inptSearch }) {
-  console.log(inptSearch);
   return <div className={`box ${!inptSearch ? "small" : ""}`}>{children}</div>;
 }
 
@@ -250,6 +249,85 @@ function Movies({ movie, onClickMovie }) {
   );
 }
 
+function TopMovies({ inptSearch }) {
+  const floatingDivOne = useRef(null);
+  const floatingDivTwo = useRef(null);
+  const floatingDivThree = useRef(null);
+  const floatingDivFour = useRef(null);
+  const floatingDivFive = useRef(null);
+  const floatingDivSix = useRef(null);
+
+  const floatDivArr = [
+    floatingDivOne,
+    floatingDivTwo,
+    floatingDivThree,
+    floatingDivFour,
+    floatingDivFive,
+    floatingDivSix,
+  ];
+
+  console.log(floatDivArr);
+
+  useEffect(() => {
+    let newY = 0.0;
+    let newX = 0.0;
+    let motionSway = 0.02;
+    let naturalSway = 0.1;
+    let opacitySpedd = 0.005;
+    const animationDelay = 1500;
+    let animationId = null;
+
+    floatDivArr.forEach((floatRef, index) => {
+      const center = {
+        x: parseFloat(getComputedStyle(floatRef.current).left),
+        y: parseFloat(getComputedStyle(floatRef.current).top),
+      };
+
+      let animatedValue = 0.0;
+      let newOpacity = 0.0;
+
+      setTimeout(() => {
+        function startAnimation() {
+          if (!floatRef.current) {
+            // If floatRef is null, stop the animation
+            return;
+          }
+
+          newY = center.y - animatedValue;
+          newX =
+            center.x + 20 * Math.sin(motionSway * animatedValue) + naturalSway;
+          floatRef.current.style.top = `${newY}px`;
+          floatRef.current.style.left = `${newX}px`;
+          newOpacity = Math.sin(opacitySpedd * animatedValue);
+          floatRef.current.style.opacity = newOpacity;
+
+          animatedValue++;
+
+          if (floatRef.current.style.opacity < 0) {
+            newY = 0.0;
+            newX = 0.0;
+            animatedValue = 0.0;
+            startAnimation();
+          } else {
+            requestAnimationFrame(startAnimation);
+          }
+        }
+        startAnimation();
+      }, index * animationDelay);
+    });
+  }, []);
+  return (
+    <div className="topMoviesContainer">
+      <div ref={floatingDivOne} className="topMoviesBubble"></div>
+      <div ref={floatingDivTwo} className="topMoviesBubble"></div>
+      <div ref={floatingDivThree} className="topMoviesBubble"></div>
+      <div ref={floatingDivFour} className="topMoviesBubble"></div>
+      <div ref={floatingDivFive} className="topMoviesBubble"></div>
+      <div ref={floatingDivSix} className="topMoviesBubble"></div>
+    </div>
+  );
+}
+
 function Loader() {
   return (
     <div className="loadingDiv">
@@ -259,7 +337,6 @@ function Loader() {
 }
 
 function WatchedMoviesSummary({ watched }) {
-  console.log(watched);
   const avgImdbRating = average(
     watched.map((movie) => movie.imdbRating)
   ).toFixed(2);
@@ -294,25 +371,6 @@ function WatchedMoviesSummary({ watched }) {
     </div>
   );
 }
-
-/* function TopMovies() {
-  console.log(topFive);
-
-  return (
-    <div className="movielist">
-      <h1>IMDb Top 5 Movies</h1>
-      {topFive.map((movie) => (
-        <div className="movieListDiv">
-          <img src={movie.Poster} alt="" />
-          <div className="movieBasicInfo">
-            <h2>{movie.title}</h2>
-            <p>⭐{movie.imdbRating}</p>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-} */
 
 function WatchedList({ watched, onDelete }) {
   return (
