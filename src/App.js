@@ -7,7 +7,7 @@ import { useLocalStorage } from "./useLocalStorage";
 const TRAILERKEY = "9de0616d717374f9f382940f3ebb922d";
 const KEY = "86195a89";
 
-const topFive = [
+const topSix = [
   {
     imdbID: "tt0111161",
     title: "The Shawshank Redemption",
@@ -43,6 +43,30 @@ const topFive = [
       "https://m.media-amazon.com/images/M/MV5BNDE4OTMxMTctNmRhYy00NWE2LTg3YzItYTk3M2UwOTU5Njg4XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
     imdbRating: "9.0",
   },
+
+  {
+    imdbID: "tt0120737",
+    title: "The Lord of the Rings: The Fellowship of the Ring",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BN2EyZjM3NzUtNWUzMi00MTgxLWI0NTctMzY4M2VlOTdjZWRiXkEyXkFqcGdeQXVyNDUzOTQ5MjY@._V1_SX300.jpg",
+    imdbRating: "8.9",
+  },
+
+  {
+    imdbID: "tt0109830",
+    title: "Forrest Gump",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
+    imdbRating: "8.8",
+  },
+
+  {
+    imdbID: "tt0110912",
+    title: "Pulp Fiction",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BNGNhMDIzZTUtNTBlZi00MTRlLWFjM2ItYzViMjE3YzI5MjljXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
+    imdbRating: "8.9",
+  },
 ];
 
 const average = (arr) =>
@@ -56,7 +80,6 @@ export default function App() {
   const [trailerOpen, setTrailerOpen] = useState(false);
   const { movies, isLoading, error } = useMoviesFetch(inptSearch, KEY);
   const [watched, setWatched] = useLocalStorage([], "movies");
-  console.log(movies);
 
   function handleSearch(e) {
     setInptSearch(e);
@@ -121,7 +144,7 @@ export default function App() {
 
         <Container>
           <Box inptSearch={inptSearch}>
-            {movies.length <= 1 && <TopMovies inptSearch />}
+            {movies.length <= 1 && <TopMovies topSix={topSix} />}
             {isLoading && <Loader />}
             {error && <Error onErr={error} />}
             {!isLoading && !error && (
@@ -249,13 +272,15 @@ function Movies({ movie, onClickMovie }) {
   );
 }
 
-function TopMovies({ inptSearch }) {
+function TopMovies({ topSix }) {
   const floatingDivOne = useRef(null);
   const floatingDivTwo = useRef(null);
   const floatingDivThree = useRef(null);
   const floatingDivFour = useRef(null);
   const floatingDivFive = useRef(null);
   const floatingDivSix = useRef(null);
+  const floatingDivSeven = useRef(null);
+  const floatingDivEight = useRef(null);
 
   const floatDivArr = [
     floatingDivOne,
@@ -264,20 +289,27 @@ function TopMovies({ inptSearch }) {
     floatingDivFour,
     floatingDivFive,
     floatingDivSix,
+    floatingDivSeven,
+    floatingDivEight,
   ];
 
-  console.log(floatDivArr);
+  const topMovs = topSix.map((mov) => {
+    return mov.Poster;
+  });
+
+  console.log(topMovs);
 
   useEffect(() => {
     let newY = 0.0;
     let newX = 0.0;
-    let motionSway = 0.02;
+    let motionSway = 0.015;
     let naturalSway = 0.1;
     let opacitySpedd = 0.005;
-    const animationDelay = 1500;
+    const animationDelay = 1300;
     let animationId = null;
 
-    floatDivArr.forEach((floatRef, index) => {
+    floatDivArr.map((floatRef, index) => {
+      console.log(index);
       const center = {
         x: parseFloat(getComputedStyle(floatRef.current).left),
         y: parseFloat(getComputedStyle(floatRef.current).top),
@@ -315,15 +347,14 @@ function TopMovies({ inptSearch }) {
         startAnimation();
       }, index * animationDelay);
     });
-  }, []);
+  }, [floatDivArr]);
   return (
     <div className="topMoviesContainer">
-      <div ref={floatingDivOne} className="topMoviesBubble"></div>
-      <div ref={floatingDivTwo} className="topMoviesBubble"></div>
-      <div ref={floatingDivThree} className="topMoviesBubble"></div>
-      <div ref={floatingDivFour} className="topMoviesBubble"></div>
-      <div ref={floatingDivFive} className="topMoviesBubble"></div>
-      <div ref={floatingDivSix} className="topMoviesBubble"></div>
+      {floatDivArr.map((floatRefNum, index) => (
+        <div ref={floatRefNum} className="topMoviesBubble">
+          <img src={topMovs[index]} alt="" className="bubbleImg" />
+        </div>
+      ))}
     </div>
   );
 }
