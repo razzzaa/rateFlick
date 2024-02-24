@@ -305,7 +305,7 @@ function TopMovies({ topSix }) {
     let motionSway = 0.015;
     let naturalSway = 0.1;
     let opacitySpedd = 0.005;
-    const animationDelay = 1300;
+    const animationDelay = 1800;
     let animationId = null;
 
     floatDivArr.map((floatRef, index) => {
