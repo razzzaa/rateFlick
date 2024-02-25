@@ -351,9 +351,7 @@ function TopMovies({ topSix }) {
   return (
     <div className="topMoviesContainer">
       {floatDivArr.map((floatRefNum, index) => (
-        <div ref={floatRefNum} className="topMoviesBubble">
-          <img src={topMovs[index]} alt="" className="bubbleImg" />
-        </div>
+        <div ref={floatRefNum} className="topMoviesBubble"></div>
       ))}
     </div>
   );

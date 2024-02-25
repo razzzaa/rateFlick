@@ -525,24 +525,23 @@ body {
   border-radius: 50%;
   position: absolute;
   transform: translate(-50%, -50%);
-  -webkit-box-shadow: 0px 0px 20px 1px rgba(0, 0, 0, 0.98);
-  -moz-box-shadow: 0px 0px 20px 1px rgba(0, 0, 0, 0.98);
-  box-shadow: 0px 0px 20px 1px rgba(0, 0, 0, 0.98);
   opacity: 1;
+  -webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
 }
 
 .topMoviesBubble:nth-of-type(1) {
   left: 37%;
   top: 93.2%;
-  width: 120px;
-  height: 120px;
+  width: 12px;
+  height: 12px;
   opacity: 0;
   z-index: 8;
 }
 .topMoviesBubble:nth-of-type(2) {
   left: 10%;
   top: 95.7%;
-  background-color: #731d1d;
   width: 100px;
   height: 100px;
   opacity: 0;
@@ -551,7 +550,6 @@ body {
 .topMoviesBubble:nth-of-type(3) {
   left: 82%;
   top: 85.4%;
-  background-color: #731d1d;
   width: 50px;
   height: 50px;
   opacity: 0;
@@ -560,7 +558,6 @@ body {
 .topMoviesBubble:nth-of-type(4) {
   left: 72%;
   top: 92.5%;
-  background-color: #731d1d;
   width: 190px;
   height: 190px;
   opacity: 0;
@@ -570,7 +567,6 @@ body {
 .topMoviesBubble:nth-of-type(5) {
   left: 13%;
   top: 98.4%;
-  background-color: #731d1d;
   width: 90px;
   height: 90px;
   opacity: 0;
@@ -580,7 +576,6 @@ body {
 .topMoviesBubble:nth-of-type(6) {
   left: 49%;
   top: 91.2%;
-  background-color: #731d1d;
   width: 170px;
   height: 170px;
   opacity: 0;
@@ -590,9 +585,8 @@ body {
 .topMoviesBubble:nth-of-type(7) {
   left: 88%;
   top: 93.9%;
-  background-color: #731d1d;
-  width: 90px;
-  height: 90px;
+  width: 56px;
+  height: 56px;
   opacity: 0;
   z-index: 2;
 }
@@ -600,9 +594,8 @@ body {
 .topMoviesBubble:nth-of-type(8) {
   left: 65.67%;
   top: 94.6%;
-  background-color: #731d1d;
-  width: 210px;
-  height: 210px;
+  width: 21px;
+  height: 21px;
   opacity: 0;
   z-index: 1;
 }
@@ -611,7 +604,7 @@ body {
   overflow: hidden;
 }
 
-.bubbleImg {
+/* .bubbleImg {
   height: 100%;
   width: 100%;
   border-radius: inherit;
@@ -624,3 +617,4 @@ body {
   -moz-box-shadow: 0px 0px 20px 1px rgba(231, 166, 26, 0.47);
   box-shadow: 0px 0px 20px 1px rgba(231, 166, 26, 0.47);
 }
+ */
