@@ -80,6 +80,8 @@ export default function App() {
   const [trailerOpen, setTrailerOpen] = useState(false);
   const { movies, isLoading, error } = useMoviesFetch(inptSearch, KEY);
   const [watched, setWatched] = useLocalStorage([], "movies");
+  console.log(movies);
+  console.log(watched);
 
   function handleSearch(e) {
     setInptSearch(e);
@@ -309,7 +311,6 @@ function TopMovies({ topSix }) {
     let animationId = null;
 
     floatDivArr.map((floatRef, index) => {
-      console.log(index);
       const center = {
         x: parseFloat(getComputedStyle(floatRef.current).left),
         y: parseFloat(getComputedStyle(floatRef.current).top),
@@ -413,29 +414,29 @@ function WatchedList({ watched, onDelete }) {
 
 function WatchedMovie({ movie, onDelete }) {
   return (
-    <p className="watchedMovie">
-      <span>
-        <p>
-          <img className="watchedPoster" src={movie.poster} alt="" />
-        </p>
-      </span>
-      <span>
-        <p>{movie.imdbRating}</p>
-      </span>
-      <span>
-        <p>{movie.userRating}</p>
-      </span>
-      <span>
-        <p>{movie.runtime}</p>
-      </span>
-      <span>
-        <p>
-          <button onClick={() => onDelete(movie.imdbID)} className="deleteBtn">
-            <img src="./images/delete.png" alt="" />
-          </button>
-        </p>
-      </span>
-    </p>
+    <div className="watchedMovie">
+      <div>
+        <img className="watchedPoster" src={movie.poster} alt="" />
+      </div>
+      <div className="watchedStats">
+        <div>
+          <h3 className="">{movie.title}</h3>
+        </div>
+        <div className="stats">
+          <span>{movie.imdbRating}</span>
+          <span>{movie.userRating}</span>
+          <span>{movie.runtime}</span>
+          <span>
+            <button
+              onClick={() => onDelete(movie.imdbID)}
+              className="deleteBtn"
+            >
+              <img src="./images/delete.png" alt="" />
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -483,6 +484,7 @@ function WatchedSelected({
       runtime: Number(runtime.split(" ").at(0)),
       poster,
       imdbID,
+      title,
     };
     onAddRating(addNewWatched);
     onClose();

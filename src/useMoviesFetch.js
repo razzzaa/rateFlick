@@ -41,7 +41,7 @@ export function useMoviesFetch(inptSearch, KEY) {
     return function () {
       controller.abort();
     };
-  }, [inptSearch]);
+  }, [inptSearch, KEY]);
 
   return { movies, isLoading, error };
 }
